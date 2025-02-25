@@ -1,63 +1,112 @@
-class Book:
-    """ Базовый класс книги. """
-    def __init__(self, name: str, author: str):
-        self._name = name
-        self._author = author
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def author(self):
-        return self._author
-
-    def __str__(self):
-        return f"Книга {self.name}. Автор {self.author}"
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(name={self.name!r}, author={self.author!r})"
+from typing import Any
 
 
-class PaperBook(Book):
-    def __init__(self, name: str, author: str, pages: int):
-        super().__init__(name, author)
-        self.pages = pages
+class Appliance:
+    """
+    Базовый класс для бытовой техники.
+    """
 
-    @property
-    def pages(self):
-        return self._pages
+    def __init__(self, brand: str, power: int) -> None:
+        """
+        Инициализация прибора.
+        :param brand: Бренд прибора.
+        :param power: Мощность прибора в ваттах.
+        """
+        self.brand = brand
+        self._power = power  # Инкапсуляция: мощность не изменяется пользователем напрямую
 
-    @pages.setter
-    def pages(self, value):
-        if not isinstance(value, int) or value <= 0:
-            raise ValueError("Количество страниц должно быть положительным целым числом.")
-        self._pages = value
+    def __str__(self) -> str:
+        return f"Бытовая техника {self.brand}, мощность {self._power} Вт"
 
-    def __str__(self):
-        return f"Книга {self.name}. Автор {self.author}. Страниц: {self.pages}"
+    def __repr__(self) -> str:
+        return f"Appliance(brand={self.brand!r}, power={self._power!r})"
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}(name={self.name!r}, author={self.author!r}, pages={self.pages})"
+    def turn_on(self) -> str:
+        """
+        Включение прибора.
+
+        >>> appliance = Appliance("Generic", 1000)
+        >>> appliance.turn_on()
+        'Generic включен.'
+        """
+        return f"{self.brand} включен."
 
 
-class AudioBook(Book):
-    def __init__(self, name: str, author: str, duration: float):
-        super().__init__(name, author)
-        self.duration = duration
+class WashingMachine(Appliance):
+    """
+    Дочерний класс для стиральных машин.
+    """
 
-    @property
-    def duration(self):
-        return self._duration
+    def __init__(self, brand: str, power: int, load_capacity: int) -> None:
+        """
+        Инициализация стиральной машины.
+        :param brand: Бренд.
+        :param power: Мощность в ваттах.
+        :param load_capacity: Вместимость загрузки в килограммах.
+        """
+        super().__init__(brand, power)
+        self.load_capacity = load_capacity
 
-    @duration.setter
-    def duration(self, value):
-        if not isinstance(value, (int, float)) or value <= 0:
-            raise ValueError("Длительность аудиокниги должна быть положительным числом.")
-        self._duration = value
+    def __str__(self) -> str:
+        return f"Стиральная машина {self.brand}, мощность {self._power} Вт, загрузка {self.load_capacity} кг"
 
-    def __str__(self):
-        return f"Книга {self.name}. Автор {self.author}. Длительность: {self.duration:.2f} ч."
+    def start_wash(self) -> str:
+        """
+        Запуск стирки.
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}(name={self.name!r}, author={self.author!r}, duration={self.duration})"
+        >>> wm = WashingMachine("Samsung", 2000, 7)
+        >>> wm.start_wash()
+        'Samsung: Стирка началась.'
+        """
+        return f"{self.brand}: Стирка началась."
+
+    def turn_on(self) -> str:
+        """
+        Перегруженный метод включения.
+        Причина: Стиральные машины требуют подготовки перед включением.
+
+        >>> wm = WashingMachine("Samsung", 2000, 7)
+        >>> wm.turn_on()
+        'Samsung: Проверка загрузки... Готов к стирке!'
+        """
+        return f"{self.brand}: Проверка загрузки... Готов к стирке!"
+
+
+class Refrigerator(Appliance):
+    """
+    Дочерний класс для холодильников.
+    """
+
+    def __init__(self, brand: str, power: int, volume: int) -> None:
+        """
+        Инициализация холодильника.
+        :param brand: Бренд.
+        :param power: Мощность в ваттах.
+        :param volume: Объем холодильника в литрах.
+        """
+        super().__init__(brand, power)
+        self.volume = volume
+
+    def __str__(self) -> str:
+        return f"Холодильник {self.brand}, мощность {self._power} Вт, объем {self.volume} л"
+
+    def cool_down(self) -> str:
+        """
+        Запуск охлаждения.
+
+        >>> fridge = Refrigerator("LG", 150, 300)
+        >>> fridge.cool_down()
+        'LG: Охлаждение запущено.'
+        """
+        return f"{self.brand}: Охлаждение запущено."
+
+
+# Пример использования
+wm = WashingMachine("Samsung", 2000, 7)
+fridge = Refrigerator("LG", 150, 300)
+
+print(wm)
+print(wm.turn_on())
+print(fridge)
+print(fridge.turn_on())
+
